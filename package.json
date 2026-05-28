@@ -9,13 +9,17 @@
     "start": "next start"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.80",
+    "@ai-sdk/react": "^3.0.194",
     "@supabase/supabase-js": "^2.106.2",
+    "ai": "^6.0.192",
     "clsx": "^2.1.1",
     "lucide-react": "^1.17.0",
     "next": "^16.2.6",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.0",

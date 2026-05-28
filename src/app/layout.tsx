@@ -45,9 +45,12 @@ export default function RootLayout({
                 </p>
               </Link>
             </div>
-            <nav className="text-sm flex gap-4 sm:gap-5 text-[var(--color-muted)]">
+            <nav className="text-sm flex gap-3 sm:gap-5 text-[var(--color-muted)]">
               <Link href="/" className="hover:text-[var(--color-accent)]">
                 Catalogo
+              </Link>
+              <Link href="/chat" className="hover:text-[var(--color-accent)]">
+                Chat
               </Link>
               <Link href="/statistiche" className="hover:text-[var(--color-accent)]">
                 Statistiche

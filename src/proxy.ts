@@ -6,7 +6,7 @@ import { ADMIN_COOKIE_NAME } from "@/lib/admin-cookie";
  * a /admin/login. La VERA verifica del token avviene server-side nelle pagine
  * (qui controlliamo solo presenza, per non duplicare logica crypto in middleware).
  */
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   if (pathname === "/admin/login" || pathname === "/admin/login/") {
     return NextResponse.next();
