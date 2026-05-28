@@ -2,6 +2,7 @@ import { cercaCatalogo, caseEditriciTop } from "@/lib/catalogo-query";
 import { primaStringa, primoIntero } from "@/lib/url";
 import { Cerca } from "@/components/Cerca";
 import { Tabella } from "@/components/Tabella";
+import { ListaMobile } from "@/components/ListaMobile";
 import { Paginatore } from "@/components/Paginatore";
 import type { ColonnaOrdinabile, DirezioneOrdine } from "@/types/catalogo";
 
@@ -28,14 +29,27 @@ export default async function CatalogoPage({
   const specifica = primaStringa(sp.specifica);
   const collocazione = primaStringa(sp.collocazione);
 
-  const ordinaRaw = primaStringa(sp.ordina) as ColonnaOrdinabile | undefined;
-  const ordina =
-    ordinaRaw && COLONNE_VALIDE.includes(ordinaRaw) ? ordinaRaw : undefined;
-  const direzioneRaw = primaStringa(sp.direzione);
-  const direzione: DirezioneOrdine | undefined =
-    direzioneRaw === "asc" || direzioneRaw === "desc"
-      ? direzioneRaw
-      : undefined;
+  // Il <select> mobile invia un campo combinato `ordineMobile` tipo
+  // "autore:desc". Se presente, ha la precedenza su ordina/direzione separati.
+  const ordineMobile = primaStringa(sp.ordineMobile);
+  let ordinaRaw: ColonnaOrdinabile | undefined = undefined;
+  let direzione: DirezioneOrdine | undefined = undefined;
+  if (ordineMobile) {
+    const [c, d] = ordineMobile.split(":");
+    if (c && COLONNE_VALIDE.includes(c as ColonnaOrdinabile)) {
+      ordinaRaw = c as ColonnaOrdinabile;
+    }
+    if (d === "asc" || d === "desc") direzione = d;
+  }
+  if (!ordinaRaw) {
+    const v = primaStringa(sp.ordina) as ColonnaOrdinabile | undefined;
+    if (v && COLONNE_VALIDE.includes(v)) ordinaRaw = v;
+  }
+  if (!direzione) {
+    const v = primaStringa(sp.direzione);
+    if (v === "asc" || v === "desc") direzione = v;
+  }
+  const ordina = ordinaRaw;
 
   const pagina = primoIntero(sp.pagina) ?? 1;
 
@@ -73,10 +87,13 @@ export default async function CatalogoPage({
         casaEditrice={casaEditrice}
         specifica={specifica}
         collocazione={collocazione}
+        ordina={ordina}
+        direzione={direzione}
         caseEditrici={caseEditrici}
       />
 
       <section>
+        <ListaMobile volumi={risultato.volumi} />
         <Tabella
           volumi={risultato.volumi}
           ordina={ordina}

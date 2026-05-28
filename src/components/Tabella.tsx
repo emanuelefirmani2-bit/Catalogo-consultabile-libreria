@@ -17,7 +17,7 @@ export function Tabella({
 }) {
   if (volumi.length === 0) {
     return (
-      <div className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted)]">
+      <div className="hidden sm:block rounded border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted)]">
         Nessun volume corrisponde ai filtri impostati.
       </div>
     );
@@ -39,7 +39,7 @@ export function Tabella({
   );
 
   return (
-    <div className="overflow-x-auto rounded border border-[var(--color-border)] bg-[var(--color-surface)]">
+    <div className="hidden sm:block overflow-x-auto rounded border border-[var(--color-border)] bg-[var(--color-surface)]">
       <table className="min-w-full divide-y divide-[var(--color-border)]">
         <thead className="bg-[#f3eee2]">
           <tr>
