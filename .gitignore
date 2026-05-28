@@ -1,0 +1,42 @@
+# Dipendenze (lockfile va committato per build riproducibili)
+node_modules/
+
+# Variabili d'ambiente (segrete!)
+.env
+.env.local
+.env*.local
+.env.production
+
+# File temporanei di import / analisi
+.tmp_*
+.tmp_batches/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Excel lock files (quando il file è aperto in Excel)
+~$*
+
+# Claude Code locale (settings utente)
+.claude/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Build Next.js
+.next/
+out/
+build/
+dist/
+
+# Log
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Vercel
+.vercel
