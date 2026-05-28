@@ -1,5 +1,10 @@
 # Digital Library Braga — Catalogo di consultazione
 
+[![Live](https://img.shields.io/badge/live-catalogo--consultabile--libreria.vercel.app-7a1f1f?style=flat-square)](https://catalogo-consultabile-libreria.vercel.app)
+![Next.js 16](https://img.shields.io/badge/Next.js-16-black?style=flat-square)
+![Supabase](https://img.shields.io/badge/Supabase-Postgres%2017-3ECF8E?style=flat-square)
+![Gemini](https://img.shields.io/badge/AI-Gemini%203.1%20Flash--Lite-4285F4?style=flat-square)
+
 Catalogo web di consultazione del **fondo storico** della Biblioteca del
 Conservatorio Statale di Musica «**G. Braga**» di Teramo (~5.510 volumi).
 
@@ -7,6 +12,9 @@ Sviluppato nell'ambito del dottorato di ricerca di **Emanuele Firmani**, è il
 primo modulo del sistema **Digital Library Braga**: in seguito verrà collegato
 a uno scaffale fisico LED (sistema *pick-to-light* via ESP32) per la
 localizzazione automatica dei volumi.
+
+**Repository pubblica** — codice open per riproducibilità accademica e
+citabilità nella tesi di dottorato.
 
 ---
 
