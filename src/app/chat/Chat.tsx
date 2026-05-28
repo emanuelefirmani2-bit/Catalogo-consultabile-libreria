@@ -1,10 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { Send, Sparkles, Loader2, Wrench, AlertTriangle, MessageCircle } from "lucide-react";
+import {
+  Send,
+  Sparkles,
+  Loader2,
+  Wrench,
+  AlertTriangle,
+  MessageCircle,
+  RotateCcw,
+} from "lucide-react";
 
 const SUGGERIMENTI = [
   "Quanti volumi di Verdi ci sono?",
@@ -15,42 +23,75 @@ const SUGGERIMENTI = [
 ];
 
 /**
- * Trasforma "[#48] qualcosa" in link cliccabile a /volume/[id].
- * L'id usato e' il numero d'ingresso (string), quindi cerchiamo per
- * ingresso. Per semplicita' linkiamo a /?q=NUM che fa landing su quel
- * record nella lista. (Alternativa: avere un redirect /ingresso/[n].)
+ * Mini parser markdown inline: gestisce **grassetto** e *corsivo*.
+ * Non rendere mai HTML grezzo — costruisce ReactNode così niente XSS.
+ * Volutamente minimale: il chat NON è un editor markdown.
  */
-function renderConCitazioni(testo: string) {
-  const parts: Array<string | { ingresso: string }> = [];
+function parseMarkdownInline(testo: string, baseKey: string): ReactNode[] {
+  const out: ReactNode[] = [];
+  // Regex unica per **bold** o *italic*, in ordine di precedenza
+  const re = /(\*\*([^*]+)\*\*|\*([^*\n]+)\*)/g;
+  let lastIdx = 0;
+  let m: RegExpExecArray | null;
+  let i = 0;
+  while ((m = re.exec(testo)) !== null) {
+    if (m.index > lastIdx) out.push(testo.slice(lastIdx, m.index));
+    if (m[2] !== undefined) {
+      out.push(<strong key={`${baseKey}-b${i}`}>{m[2]}</strong>);
+    } else if (m[3] !== undefined) {
+      out.push(<em key={`${baseKey}-i${i}`}>{m[3]}</em>);
+    }
+    lastIdx = m.index + m[0].length;
+    i++;
+  }
+  if (lastIdx < testo.length) out.push(testo.slice(lastIdx));
+  return out;
+}
+
+/**
+ * Trasforma il testo dell'AI in ReactNode con:
+ *   - citazioni [#NUM] → link a /ingresso/NUM (redirect a /volume/[id])
+ *   - markdown inline base (**grassetto**, *corsivo*)
+ */
+function renderTestoAI(testo: string, baseKey: string) {
+  const out: ReactNode[] = [];
   const re = /\[#([0-9]+(?:\.[0-9]+)?)\]/g;
   let lastIdx = 0;
   let m: RegExpExecArray | null;
+  let i = 0;
   while ((m = re.exec(testo)) !== null) {
-    if (m.index > lastIdx) parts.push(testo.slice(lastIdx, m.index));
-    parts.push({ ingresso: m[1] });
-    lastIdx = m.index + m[0].length;
-  }
-  if (lastIdx < testo.length) parts.push(testo.slice(lastIdx));
-
-  return parts.map((p, i) =>
-    typeof p === "string" ? (
-      <span key={i}>{p}</span>
-    ) : (
+    if (m.index > lastIdx) {
+      out.push(
+        ...parseMarkdownInline(
+          testo.slice(lastIdx, m.index),
+          `${baseKey}-t${i}`,
+        ),
+      );
+    }
+    out.push(
       <Link
-        key={i}
-        href={`/?q=${encodeURIComponent(p.ingresso)}`}
+        key={`${baseKey}-cit${i}`}
+        href={`/ingresso/${encodeURIComponent(m[1])}`}
         className="link font-mono"
-        title={`Apri record ingresso ${p.ingresso}`}
+        title={`Apri la scheda del record n. ${m[1]}`}
       >
-        [#{p.ingresso}]
-      </Link>
-    ),
-  );
+        [#{m[1]}]
+      </Link>,
+    );
+    lastIdx = m.index + m[0].length;
+    i++;
+  }
+  if (lastIdx < testo.length) {
+    out.push(
+      ...parseMarkdownInline(testo.slice(lastIdx), `${baseKey}-tail`),
+    );
+  }
+  return out;
 }
 
 export function Chat() {
   const [input, setInput] = useState("");
-  const { messages, sendMessage, status, error } = useChat({
+  const { messages, sendMessage, status, error, setMessages } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
 
@@ -62,8 +103,30 @@ export function Chat() {
     await sendMessage({ text: testo });
   }
 
+  function nuovaChat() {
+    if (isLoading) return;
+    setMessages([]);
+    setInput("");
+  }
+
   return (
     <div className="flex flex-col h-[calc(100vh-220px)] sm:h-[calc(100vh-260px)] min-h-[480px]">
+      {/* Barra superiore: nuova chat (solo se ci sono messaggi) */}
+      {messages.length > 0 ? (
+        <div className="mb-2 flex justify-end">
+          <button
+            type="button"
+            onClick={nuovaChat}
+            disabled={isLoading}
+            className="inline-flex items-center gap-1.5 rounded border border-[var(--color-border-hard)] bg-white px-3 py-1.5 text-xs text-[var(--color-foreground)] hover:bg-[#f3eee2] disabled:opacity-50"
+            title="Inizia una nuova conversazione"
+          >
+            <RotateCcw aria-hidden className="size-3.5" />
+            Nuova chat
+          </button>
+        </div>
+      ) : null}
+
       {/* Messaggi */}
       <div className="flex-1 overflow-y-auto rounded border border-[var(--color-border)] bg-[var(--color-surface)] p-4 space-y-4">
         {messages.length === 0 ? (
@@ -96,9 +159,7 @@ export function Chat() {
             <div
               key={m.id}
               className={
-                m.role === "user"
-                  ? "flex justify-end"
-                  : "flex justify-start"
+                m.role === "user" ? "flex justify-end" : "flex justify-start"
               }
             >
               <div
@@ -116,17 +177,20 @@ export function Chat() {
                   m.parts.map((p, i) => {
                     if (p.type === "text") {
                       return (
-                        <div key={i} className="whitespace-pre-wrap leading-relaxed">
-                          {renderConCitazioni(p.text)}
+                        <div
+                          key={i}
+                          className="whitespace-pre-wrap leading-relaxed"
+                        >
+                          {renderTestoAI(p.text, `${m.id}-p${i}`)}
                         </div>
                       );
                     }
-                    // Tool call: mostralo come pillola
                     if (p.type.startsWith("tool-")) {
                       const toolName = p.type.replace("tool-", "");
                       const stato = (p as { state?: string }).state ?? "";
                       const inProgress =
-                        stato === "input-streaming" || stato === "input-available";
+                        stato === "input-streaming" ||
+                        stato === "input-available";
                       return (
                         <div
                           key={i}
