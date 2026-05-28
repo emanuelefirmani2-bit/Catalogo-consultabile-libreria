@@ -6,9 +6,11 @@ import {
   BookMarked,
   CircleHelp,
   MapPin,
+  Pencil,
 } from "lucide-react";
 import { trovaVolumePerId } from "@/lib/catalogo-query";
 import { comeCampoDettaglio } from "@/lib/formatters";
+import { isAdminLoggato } from "@/lib/admin-auth";
 import type { Metadata } from "next";
 
 export async function generateMetadata({
@@ -35,13 +37,16 @@ export default async function VolumePage({
   const idNum = parseInt(id, 10);
   if (!Number.isFinite(idNum)) notFound();
 
-  const v = await trovaVolumePerId(idNum);
+  const [v, admin] = await Promise.all([
+    trovaVolumePerId(idNum),
+    isAdminLoggato(),
+  ]);
   if (!v) notFound();
 
   return (
     <article className="space-y-6">
       {/* Breadcrumb / back */}
-      <div>
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <Link
           href="/"
           className="inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-accent)]"
@@ -49,6 +54,15 @@ export default async function VolumePage({
           <ArrowLeft aria-hidden className="size-4" />
           Torna al catalogo
         </Link>
+        {admin ? (
+          <Link
+            href={`/admin/volume/${v.id}`}
+            className="inline-flex items-center gap-1.5 rounded border border-[var(--color-border-hard)] bg-white px-3 py-1.5 text-sm hover:bg-[#f3eee2]"
+          >
+            <Pencil aria-hidden className="size-4" />
+            Modifica record
+          </Link>
+        ) : null}
       </div>
 
       {/* Intestazione */}
