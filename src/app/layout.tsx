@@ -69,7 +69,7 @@ export default function RootLayout({
         <footer className="border-t border-[var(--color-border)] bg-[var(--color-surface)]">
           <div className="mx-auto max-w-7xl px-6 py-5 text-xs text-[var(--color-muted)] flex items-center justify-between flex-wrap gap-2">
             <span>
-              Catalogo di consultazione · fondo storico ·{" "}
+              Catalogo di consultazione ·{" "}
               <span className="italic">Digital Library Braga</span>
             </span>
             <span>Progetto di dottorato di ricerca · E. Firmani</span>

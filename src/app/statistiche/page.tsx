@@ -21,8 +21,8 @@ export default async function StatistichePage() {
       <header>
         <h2 className="font-display text-2xl">Statistiche del catalogo</h2>
         <p className="mt-1 text-sm text-[var(--color-muted)]">
-          Quadro quantitativo del fondo storico: composizione, qualità del
-          dato, distribuzione cronologica.
+          Quadro quantitativo del catalogo: composizione, qualità del dato,
+          distribuzione cronologica.
         </p>
       </header>
 

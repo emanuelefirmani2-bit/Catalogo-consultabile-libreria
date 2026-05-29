@@ -72,7 +72,7 @@ export default async function CatalogoPage({
     <div className="space-y-6">
       <section>
         <h2 className="font-display text-2xl text-[var(--color-foreground)]">
-          Catalogo del fondo storico
+          Catalogo
         </h2>
         <p className="mt-1 text-sm text-[var(--color-muted)]">
           {risultato.totale.toLocaleString("it-IT")} volumi nel catalogo —

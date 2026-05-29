@@ -137,8 +137,7 @@ export function Chat() {
             </h3>
             <p className="mt-2 text-sm text-[var(--color-muted)] max-w-md mx-auto">
               Fai una domanda in linguaggio naturale: l&apos;assistente AI cerca
-              direttamente nel catalogo del fondo storico e ti risponde citando
-              i record trovati.
+              direttamente nel catalogo e ti risponde citando i record trovati.
             </p>
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-2xl mx-auto text-left">
               {SUGGERIMENTI.map((s) => (
@@ -260,11 +259,6 @@ export function Chat() {
           <span className="hidden sm:inline">Invia</span>
         </button>
       </form>
-
-      <p className="mt-2 text-xs text-[var(--color-muted)] text-center">
-        Powered by Gemini 3.1 Flash-Lite · le risposte possono contenere
-        imprecisioni — verifica sempre sui record citati.
-      </p>
     </div>
   );
 }
