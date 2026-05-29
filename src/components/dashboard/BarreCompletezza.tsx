@@ -29,7 +29,7 @@ export function BarreCompletezza({
     <div className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
       <h3 className="font-display text-xl mb-3">Completezza per campo</h3>
       <p className="text-xs text-[var(--color-muted)] mb-4">
-        Percentuale di record con valore valorizzato.
+        Percentuale di record con valore inserito.
       </p>
       <ul className="space-y-2.5">
         {ordine.map(([campo, n]) => {

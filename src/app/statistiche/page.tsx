@@ -100,10 +100,7 @@ export default async function StatistichePage() {
       </section>
 
       <footer className="text-xs text-[var(--color-muted)]">
-        Dati calcolati lato server via funzione SQL{" "}
-        <code>statistiche_catalogo()</code>, cache 5 minuti. Aggiornano
-        automaticamente al re-import del catalogo o alla modifica di un
-        singolo record.
+        Dati calcolati lato server. Aggiornato automaticamente al re-import del catalogo o alla modifica di un singolo record.
       </footer>
     </div>
   );
